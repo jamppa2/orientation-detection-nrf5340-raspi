@@ -1,0 +1,6 @@
+{
+    "cmake.sourceDirectory": "/home/konz/Github/orientation-detection-nrf5340-raspi/l4",
+    "nrf-connect.applications": [
+        "${workspaceFolder}/l4"
+    ]
+}
