@@ -90,17 +90,21 @@ static bool app_button_cb(void)
 	return app_button_state;
 }
 
-/* STEP 18.1 - Define the thread function  */
+
+// STEP 18.1 - Define the thread function
 void send_data_thread(void)
 {
+	/*
 	while (1) {
-		/* Simulate data */
+		// Simulate data
 		simulate_data();
-		/* Send notification, the function sends notifications only if a client is subscribed */
+		// Send notification, the function sends notifications only if a client is subscribed
 		my_lbs_send_sensor_notify(app_sensor_value);
 
 		k_sleep(K_MSEC(NOTIFY_INTERVAL));
 	}
+	*/
+	k_sleep(K_MSEC(NOTIFY_INTERVAL));
 }
 
 static struct my_lbs_cb app_callbacks = {
@@ -158,19 +162,10 @@ int main(void)
 {
 	printk("Hello world!\n");
 
-
 	if(initializeADC() != 0)
 	{
 		printk("ADC initialization failed!");
 		return -1;
-	}
-
-	while (1) 
-	{
-		struct Measurement m = readADCValue();
-		printk("x = %d,  y = %d,  z = %d\n",m.x,m.y,m.z);
-		
-		k_sleep(K_MSEC(1000));
 	}
 
 	int blink_status = 0;
@@ -208,7 +203,17 @@ int main(void)
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
+
+		struct Measurement m = readADCValue();
+		printk("x = %d,  y = %d,  z = %d, direction = %d\n", m.x, m.y, m.z, m.direction);
+
+		uint16_t data[4] = {m.x, m.y, m.z, m.direction};
+
+		my_lbs_send_adc_data_notify(data);
+		
+		k_sleep(K_MSEC(1000));
 	}
 }
+
 /* STEP 18.2 - Define and initialize a thread to send data periodically */
 K_THREAD_DEFINE(send_data_thread_id, STACKSIZE, send_data_thread, NULL, NULL, NULL, PRIORITY, 0, 0);

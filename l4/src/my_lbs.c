@@ -29,6 +29,7 @@ LOG_MODULE_DECLARE(Lesson4_Exercise2);
 static bool notify_mysensor_enabled;
 static bool indicate_enabled;
 static bool button_state;
+static bool notify_adc_data_enabled;
 static struct my_lbs_cb lbs_cb;
 
 /* STEP 4 - Define an indication parameter */
@@ -150,4 +151,15 @@ int my_lbs_send_sensor_notify(uint32_t sensor_value)
 	}
 
 	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[7], &sensor_value, sizeof(sensor_value));
+}
+
+int my_lbs_send_adc_data_notify(uint16_t data[4])
+{
+	/*
+		if (!notify_adc_data_enabled) {	
+			return -EACCES;
+		}
+	*/
+
+	return bt_gatt_notify(NULL, &my_lbs_svc.attrs[7], data, 4 * sizeof(uint16_t));
 }

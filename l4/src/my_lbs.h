@@ -105,6 +105,8 @@ int my_lbs_send_button_state_notify(bool button_state);
  */
 int my_lbs_send_sensor_notify(uint32_t sensor_value);
 
+int my_lbs_send_adc_data_notify(uint16_t data[4]);
+
 #ifdef __cplusplus
 }
 #endif

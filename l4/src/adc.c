@@ -6,6 +6,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/printk.h>
+#include <stdlib.h>
 #include "adc.h"
 
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || \
@@ -131,5 +132,46 @@ struct Measurement readADCValue(void)
             //printk(" = %"PRId32" mV\n", val_mv);
 		}
 	}
+
+    uint16_t highest_value = 1800;
+    uint16_t lowest_value = 1200;
+
+    float center_value = ((float)highest_value + (float)lowest_value) / 2.0f;
+
+    float x_raw_value = m.x - center_value;
+    float y_raw_value = m.y - center_value;
+    float z_raw_value = m.z - center_value;
+
+    float x_distance = abs((int)x_raw_value);
+    float y_distance = abs((int)y_raw_value);
+    float z_distance = abs((int)z_raw_value);
+
+    float longest_distance = max(x_distance, max(y_distance, z_distance));
+
+    if (x_distance == longest_distance) {
+        if (x_raw_value < 0.0f) {
+            m.direction = 0;
+        }
+        else {
+            m.direction = 1;
+        }
+    }
+    else if (y_distance == longest_distance) {
+        if (y_raw_value < 0.0f) {
+            m.direction = 2;
+        }
+        else {
+            m.direction = 3;
+        }
+    }
+    else {
+        if (z_raw_value < 0.0f) {
+            m.direction = 4;
+        }
+        else {
+            m.direction = 5;
+        }
+    }
+
     return m;
 }

@@ -6,6 +6,7 @@ struct Measurement
    uint16_t x;
    uint16_t y;
    uint16_t z;
+   uint16_t direction;
 };
 
 int initializeADC(void);
